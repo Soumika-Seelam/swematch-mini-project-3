@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sentiment Analysis Tool</title>
+    <!-- Add any additional CSS or meta tags as needed -->
+</head>
+<body>
+    <h1>Sentiment Analysis Tool</h1>
+    <textarea id="textInput" rows="4" cols="50" placeholder="Enter text here..."></textarea>
+    <button onclick="analyzeSentiment()">Analyze Sentiment</button>
+    <div id="analysisResult"></div>
+    <script>
+        function analyzeSentiment() {
+            var text = document.getElementById('textInput').value;
+            if (text.trim().length === 0) {
+                alert('Please enter some text for analysis.');
+                return;
+            }
+            
+            // Replace this URL with the endpoint of your AWS API Gateway
+            var apiEndpoint = 'https://kk3g8mtthl.execute-api.us-east-2.amazonaws.com/dev';
+            
+            fetch(apiEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ text: text })
+            })
+            .then(response => response.json())
+            .then(data => {
+                document.getElementById('analysisResult').innerText = 'Sentiment: ' + data.sentiment +
+                                                                     ' (Positive: ' + data.sentimentScore.Positive.toFixed(3) +
+                                                                     ', Negative: ' + data.sentimentScore.Negative.toFixed(3) +
+                                                                     ', Neutral: ' + data.sentimentScore.Neutral.toFixed(3) +
+                                                                     ', Mixed: ' + data.sentimentScore.Mixed.toFixed(3) + ')';
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('An error occurred while analyzing the sentiment.');
+            });
+        }
+    </script>
+</body>
+</html>
